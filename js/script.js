@@ -4,11 +4,11 @@ const total = document.getElementById("ganancia-total");
 
 const costoInput = document.getElementById("costo");
 const precioInput = document.getElementById("precio");
-
 const imagenInput = document.getElementById("imagen");
 const ingredientesInput = document.getElementById("ingredientes");
-
 const gananciaInput = document.getElementById("ganancia-deseada");
+
+const productos = JSON.parse(localStorage.getItem('productos')) || [];
 
 let gananciaTotal = 0;
 
@@ -40,7 +40,7 @@ gananciaInput.addEventListener("input", () => {
   }
 });
 
-form.addEventListener("submit", (e) => {
+form.addEventListener("submit", async (e) => {
   e.preventDefault();
 
   const nombre = document.getElementById("nombre").value;
@@ -62,20 +62,54 @@ form.addEventListener("submit", (e) => {
   //const ganancia = precio - costo;
   const porcentaje = ((precioFinal - costo) / costo) * 100;
 
-  const fila = document.createElement("tr");
-  fila.innerHTML = `
-  <td>${nombre}</td>
-  <td>$UYU${costo.toFixed(2)}</td>
-  <td>$UYU${precioFinal.toFixed(2)}</td>
-  <td>$UYU${ganancia.toFixed(2)}</td>
-  <td>${porcentaje.toFixed(1)}%</td>
-  `;
-  tabla.appendChild(fila);
+
+  
+  let imagen = "";
+  if (imagenInput.files[0]) {
+    imagen = await leerImagen(imagenInput.files[0]);
+  }
+
+
+  const ingredientes = ingredientesInput.value
+    .split(",")
+    .map(i => i.trim())
+    .filter(i => i);
+
+
+  const id = productos.length ? productos[productos.length -1].id + 1 : 1;
+
+  const producto = { id, nombre, costo, precio: precioFinal, ganancia, porcentaje, imagen, ingredientes };
+  productos.push(producto);
+  localStorage.setItem("productos", JSON.stringify(productos));
+
+  agregarProductoATabla(producto);
 
   gananciaTotal += ganancia;
   total.textContent = gananciaTotal.toFixed(2);
+
 
   form.reset();
   precioInput.disabled = false;
   gananciaInput.disabled = false;
 });
+
+function agregarProductoATabla(prod){
+  const fila = document.createElement("tr");
+  fila.innerHTML = `
+  <td>${prod.nombre}</td>
+  <td>$UYU${prod.costo.toFixed(2)}</td>
+  <td>$UYU${prod.precio.toFixed(2)}</td>
+  <td>$UYU${prod.ganancia.toFixed(2)}</td>
+  <td>${prod.porcentaje.toFixed(1)}%</td>
+  <td>${prod.ingredientes.join(", ")}</td>
+  <td>${prod.imagen ? `<img src="${prod.imagen}" width="50">` : ""}</td>
+  `;
+  tabla.querySelector("tbody").appendChild(fila);
+
+  }
+  productos.forEach(agregarProductoATabla);
+
+
+
+
+
