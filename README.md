@@ -1,7 +1,7 @@
 .Programa que permite guardar productos y calcular su precio de costo
 
 Para luego poder ajustar y visualizar su precio, ganancia, y porcentaje de ganancia.
-También ingresando cuánto porcentaje de ganancia se quiere ganar, se puede ver el precio correspondiente.
+También ingresando cuánto porcentaje de ganancia se quiere ganar se puede ver el precio correspondiente.
 
 .Agregué una funcionalidad para guardar imágenes (estaría bueno poder sacar una foto en el momento si es con celu)
 
