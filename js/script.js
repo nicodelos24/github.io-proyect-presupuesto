@@ -80,12 +80,25 @@ function leerImagen(file) {
 
 function agregarIngredienteATabla(ing) {
   const fila = document.createElement("tr");
+
+
+// calcular correctamente precio unitario
+let precioUnitario = ing.precio / ing.cantidad;
+let unidadReferencia = ing.unidad;
+
+
+//Si es un paquete. calcular precio por el contenido
+if (ing.unidad === "paquete" && ing.contenido && ing.contenidoUnidad) {
+  precioUnitario = ing.precio / (ing.cantidad * ing.contenido);
+  unidadReferencia = ing.contenidoUnidad; // mostrar por unidad de contenido
+}
+
   fila.innerHTML = `
   <td>${ing.nombre}</td>
   <td>${ing.cantidad}</td>
   <td>${ing.unidad}</td>
   <td>$${ing.precio.toFixed(2)}</td>
-  <td>$${(ing.precio / ing.cantidad).toFixed(2)} por ${ing.unidad}</td>
+  <td>$${precioUnitario.toFixed(1)} por ${unidadReferencia}</td>
   <td><button class= "borrar-ing">🗑️</button></td>
   `;
   tablaIng.appendChild(fila);
@@ -370,7 +383,7 @@ formIng.addEventListener("submit", (e) => {
   const contenidoFinal = unidad === "paquete" ? contenido :1;
 
 
-  const nuevoIng = { nombre, cantidad, unidad, precio, contenido: contenidoFinal };
+  const nuevoIng = { nombre, cantidad, unidad, precio, contenido: contenidoFinal, contenidoUnidad };
 
   ingredientes.push(nuevoIng);
   localStorage.setItem("ingredientes", JSON.stringify(ingredientes));
@@ -393,7 +406,7 @@ function agregarProductoATabla(prod) {
   ${prod.ingredientes
     .map(
       (i) =>
-        `${i.nombre} (${i.cantidad}${
+        `${i.nombre} (${i.cantidad} ${i.unidad}${
           i.costo ? " - $" + i.costo.toFixed(2) : ""
         })`
     )
