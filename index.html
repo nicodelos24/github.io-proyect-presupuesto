@@ -12,6 +12,8 @@
 
     <div class="container">
 
+        <h1>Calcular cositas</h1>
+
         <h1>Soy una app</h1>
         <form id="form-prod">
             <input type="text" id="nombre" placeholder="Nombre del producto" required>
@@ -20,6 +22,43 @@
             <input type="number" id="precio" placeholder="Precio de venta en $ (por unidad)">
             <input type="number" id="ganancia-deseada" placeholder="Ganancia deseada en %">
 
+            <div id="ingredientes-usados">
+
+                <h3>Ingredientes del producto</h3>
+                <button type="button" id="agregar-ingrediente-uso">+ Agregar del inventario</button>
+                <div id="lista-ingredientes-uso"></div>
+                <p><strong>Costo total de ingredientes:</strong>$<span id="costo-ingredientes">0.00</span></p>
+
+            </div>
+
+            <button type="submit">Calcular</button>
+        </form>
+
+        <form id="form-ing">
+            <input type="text" id="ing-nombre" placeholder="Nombre del ingrediente o material" required>
+            <input type="number" id="ing-precio" placeholder="Precio en $UYU" required>
+            
+            
+            <select id="ing-unidad" required>
+                <optgroup label="Peso">
+                    <option value="g">Gramos (g)</option>
+                    <option value="kg">Kilogramos (kg)</option>
+                </optgroup>
+                <optgroup label="Volumen">
+                    <option value="ml">Mililitros (ml)</option>
+                    <option value="cl">Centilitros (cl)</option>
+                    <option value="l">Litros (l)</option>
+                </optgroup>
+                <optgroup label="Unidades">
+                    <option value="unidad">Unidad</option>
+                    <option value="paquete">Paquete</option>
+                    <option value="bolsa">Bolsa</option>
+                    <option value="manga">Manga</option>
+                </optgroup>
+            </select>
+            <input type="number" id="ing-cantidad" placeholder="Cantidad total" required>
+
+            <button type="submit">Guardar en inventario</button>
 
             <input type="text" id="ingredientes" placeholder="Ingredientes separados por coma">
 
@@ -42,6 +81,23 @@
                     <th>Precio</th>
                     <th>Neto</th>
                     <th>Porcentaje de ganancia</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+        </table>
+
+        <table id="tabla-ing">
+            <thead>
+                <tr>
+                    <th>Ingrediente</th>
+                    <th>Cantidad total</th>
+                    <th>Unidad</th>
+                    <th>Precio total</th>
+                    <th>Precio unitario</th>
+                    <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>

@@ -34,4 +34,50 @@ En conclusion:
 como ingredientes (que se sumen según cada receta, acá estaria bueno meter el recetario) 
 
 
+✅ Gestión de ingredientes/materiales con cantidades, unidades y precios.
 
+✅ Cálculo automático de costos de producción según ingredientes usados.
+
+✅ Cálculo de precio de venta según ganancia deseada.
+
+✅ Carga de imagen del producto.
+
+✅ Persistencia con localStorage (se guarda todo aunque recargue).
+
+✅ Eliminación de productos e ingredientes.
+
+✅ Conversión básica de unidades (g, kg, ml, l, etc).
+
+
+-Editar productos o ingredientes existentes (por ejemplo si cambia un precio).
+
+-Ver ganancia total o resumen por producto (quizás mostrar la suma general o promedio).
+
+-Ordenar o filtrar productos por nombre, costo, o ganancia (con un simple input o botón).
+
+-Confirmar antes de borrar todo (una limpieza de datos o reinicio general del sistema).
+
+-Validación visual (avisos en rojo si un campo está vacío o tiene un número inválido).
+
+-Mejor formato de tabla (bordes suaves, colores, responsive para celular).
+
+-opcExportar a Excel o PDF (lista de productos con costos y precios).
+
+-opc-Historial o log (por ejemplo, cuándo se agregó o modificó algo).
+
+-Buscar ingrediente o producto por nombre.
+
+-Mostrar unidades equivalentes (por ejemplo “1 kg = 1000 g”, solo como ayuda visual).
+
+
+
+
+--Sugerencia
+
+
+
+Agregar edición (para ingredientes y productos).
+
+Un botón de “borrar todo” con confirmación.
+
+Un resumen visual de los productos (por ejemplo, cuántos tiene cargados y ganancia total).
