@@ -15,6 +15,21 @@ const productos = JSON.parse(localStorage.getItem("productos")) || [];
 
 let gananciaTotal = 0;
 
+const conversion = {
+  g: 1,
+  kg: 1000,
+  ml: 1,
+  cl: 10,
+  l: 1000,
+};
+
+function convertirCantidad(cantidad, unidadOrigen, unidadDestino) {
+  if (conversion[unidadOrigen] && conversion[unidadDestino]) {
+    return (cantidad * conversion[unidadOrigen]) / conversion[unidadDestino];
+  }
+  return cantidad; //si no hay conversión
+}
+
 // esto es lo de leer la imagen y convertir a Base64 y lo guarda en localStorage
 function leerImagen(file) {
   return new Promise((resolve, reject) => {
@@ -44,6 +59,7 @@ function agregarIngredienteATabla(ing) {
   });
 }
 
+// Acá se selecciona ingresar precio o calcular según porcentaje ganancia
 precioInput.addEventListener("input", () => {
   if (precioInput.value !== "") {
     gananciaInput.disabled = true;
@@ -100,6 +116,25 @@ agregarIngredienteUsoBtn.addEventListener("click", (e) => {
   cantidadInput.placeholder = "Cantidad usada";
   cantidadInput.min = "0";
 
+  const unidadSelect = document.createElement("select");
+  unidadSelect.innerHTML = `
+  <optgroup label="Peso">
+    <option value="g">Gramos (g)</option>
+    <option value="kg">Kilogramos (kg)</option>
+  </optgroup>
+  <optgroup label="Volumen">
+    <option value="ml">Mililitros (ml)</option>
+    <option value="cl">Centilitros (cl)</option>
+    <option value="l">Litros (l)</option>
+  </optgroup>
+  <optgroup label="Unidades">
+    <option value="unidad">Unidad</option>
+    <option value="paquete">Paquete</option>
+    <option value="bolsa">Bolsa</option>
+    <option value="manga">Manga</option>
+  </optgroup>
+  `;
+
   // costo parcial
   const costoParcial = document.createElement("span");
   costoParcial.textContent = "$0.00";
@@ -116,8 +151,9 @@ agregarIngredienteUsoBtn.addEventListener("click", (e) => {
   // Evento para recalcular costo cuando haya cambios
   cantidadInput.addEventListener("input", actualizarCostoIngredientes);
   select.addEventListener("change", actualizarCostoIngredientes);
+  unidadSelect.addEventListener("change", actualizarCostoIngredientes);
 
-  cont.append(select, cantidadInput, costoParcial, btnBorrar);
+  cont.append(select, cantidadInput, unidadSelect, costoParcial, btnBorrar);
   listaIngredientesUso.appendChild(cont);
 
   actualizarCostoIngredientes();
@@ -130,8 +166,10 @@ function actualizarCostoIngredientes() {
   ingredientesUsados = [];
 
   filas.forEach((fila) => {
-    const nombreIng = fila.querySelector("select").value;
-    const cantidad = parseFloat(fila.querySelector("input").value) || 0;
+    const selects = fila.querySelectorAll('select');
+    const nombreIng = selects[0].value;
+    const cantidadUsada = parseFloat(fila.querySelector("input").value) || 0;
+    const unidadUsada = selects[1] ? selects[1].value : "g";
     const spanCosto = fila.querySelector("span");
 
     const ingData = ingredientes.find((i) => i.nombre === nombreIng);
@@ -139,15 +177,22 @@ function actualizarCostoIngredientes() {
       return;
     }
 
+    const cantidadConvertida = convertirCantidad(
+      cantidadUsada,
+      unidadUsada, // la selecciona el usuario al usar ingrediente
+      ingData.unidad // unidad en el inventario
+    );
+
     const costoUnitario = ingData.precio / ingData.cantidad;
-    const costoTotal = costoUnitario * cantidad;
+    const costoTotal = costoUnitario * cantidadConvertida;
 
     spanCosto.textContent = `$${costoTotal.toFixed(2)}`;
     total += costoTotal;
 
     ingredientesUsados.push({
       nombre: nombreIng,
-      cantidad,
+      cantidad: cantidadUsada,
+      unidad: unidadUsada,
       costo: costoTotal,
     });
   });
@@ -155,6 +200,9 @@ function actualizarCostoIngredientes() {
   costoIngredientesSpan.textContent = total.toFixed(2);
   costoInput.value = total.toFixed(2);
 }
+
+
+
 
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
@@ -164,7 +212,7 @@ form.addEventListener("submit", async (e) => {
 
   let precioFinal;
 
-  if (precioInput.value !== "") {
+  if (precioInput.value !== "E") {
     precioFinal = parseFloat(precioInput.value);
   } else if (gananciaInput.value !== "") {
     const porcentaje = parseFloat(gananciaInput.value);

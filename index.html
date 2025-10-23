@@ -24,21 +24,40 @@
             <div id="ingredientes-usados">
 
                 <h3>Ingredientes del producto</h3>
-                <button type="button" id="agregar-ingrediente-uso">+ Agregar ingrediente</button>
+                <button type="button" id="agregar-ingrediente-uso">+ Agregar del inventario</button>
                 <div id="lista-ingredientes-uso"></div>
                 <p><strong>Costo total de ingredientes:</strong>$<span id="costo-ingredientes">0.00</span></p>
 
             </div>
 
-            <button type="submit">Agregar producto</button>
+            <button type="submit">Calcular</button>
         </form>
 
         <form id="form-ing">
-            <input type="text" id="ing-nombre" placeholder="Nombre del ingrediente" required>
+            <input type="text" id="ing-nombre" placeholder="Nombre del ingrediente o material" required>
             <input type="number" id="ing-precio" placeholder="Precio en $UYU" required>
+            
+            
+            <select id="ing-unidad" required>
+                <optgroup label="Peso">
+                    <option value="g">Gramos (g)</option>
+                    <option value="kg">Kilogramos (kg)</option>
+                </optgroup>
+                <optgroup label="Volumen">
+                    <option value="ml">Mililitros (ml)</option>
+                    <option value="cl">Centilitros (cl)</option>
+                    <option value="l">Litros (l)</option>
+                </optgroup>
+                <optgroup label="Unidades">
+                    <option value="unidad">Unidad</option>
+                    <option value="paquete">Paquete</option>
+                    <option value="bolsa">Bolsa</option>
+                    <option value="manga">Manga</option>
+                </optgroup>
+            </select>
             <input type="number" id="ing-cantidad" placeholder="Cantidad total" required>
-            <input type="text" id="ing-unidad" placeholder="Unidad del ingrediente (kg, g, lt, etc)" required>
-            <button type="submit">Agregar ingrediente</button>
+
+            <button type="submit">Guardar en inventario</button>
         </form>
 
         <table id="tabla-prod">
