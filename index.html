@@ -35,8 +35,7 @@
 
         <form id="form-ing">
             <input type="text" id="ing-nombre" placeholder="Nombre del ingrediente o material" required>
-            <input type="number" id="ing-precio" placeholder="Precio en $UYU" required>
-            
+            <input type="number" id="ing-cantidad" placeholder="Cantidad total" required>
             
             <select id="ing-unidad" required>
                 <optgroup label="Peso">
@@ -51,12 +50,10 @@
                 <optgroup label="Unidades">
                     <option value="unidad">Unidad</option>
                     <option value="paquete">Paquete</option>
-                    <option value="bolsa">Bolsa</option>
-                    <option value="manga">Manga</option>
                 </optgroup>
             </select>
-            <input type="number" id="ing-cantidad" placeholder="Cantidad total" required>
-
+            <input type="number" id="ing-contenido" placeholder="Cantidad o peso por paquete" style:"display:none">
+            <input type="number" id="ing-precio" placeholder="Precio en $UYU" required>
             <button type="submit">Guardar en inventario</button>
         </form>
 

@@ -5,6 +5,18 @@ const total = document.getElementById("ganancia-total");
 const formIng = document.getElementById("form-ing");
 const tablaIng = document.getElementById("tabla-ing").querySelector("tbody");
 
+const unidadSelect = document.getElementById("ing-unidad");
+const contenidoInput = document.getElementById("ing-contenido");
+
+unidadSelect.addEventListener("change", () => {
+  if (unidadSelect.value === "paquete") {
+    contenidoInput.style.display = "block";
+  } else {
+    contenidoInput.style.display = "none";
+    contenidoInput.value = "";
+  }
+});
+
 const costoInput = document.getElementById("costo");
 const precioInput = document.getElementById("precio");
 const imagenInput = document.getElementById("imagen");
@@ -166,7 +178,7 @@ function actualizarCostoIngredientes() {
   ingredientesUsados = [];
 
   filas.forEach((fila) => {
-    const selects = fila.querySelectorAll('select');
+    const selects = fila.querySelectorAll("select");
     const nombreIng = selects[0].value;
     const cantidadUsada = parseFloat(fila.querySelector("input").value) || 0;
     const unidadUsada = selects[1] ? selects[1].value : "g";
@@ -177,11 +189,20 @@ function actualizarCostoIngredientes() {
       return;
     }
 
-    const cantidadConvertida = convertirCantidad(
-      cantidadUsada,
-      unidadUsada, // la selecciona el usuario al usar ingrediente
-      ingData.unidad // unidad en el inventario
-    );
+    let cantidadConvertida;
+
+    if (ingData.unidad === "paquete") {
+      //si ingrediente se guarda como paquete
+      cantidadConvertida =
+        (cantidadUsada / ingData.contenido) * ingData.cantidad;
+    } else {
+      // sino se usa la conversión normal
+      cantidadConvertida = convertirCantidad(
+        cantidadUsada,
+        unidadUsada, // la selecciona el usuario al usar ingrediente
+        ingData.unidad // unidad en el inventario
+      );
+    }
 
     const costoUnitario = ingData.precio / ingData.cantidad;
     const costoTotal = costoUnitario * cantidadConvertida;
@@ -200,9 +221,6 @@ function actualizarCostoIngredientes() {
   costoIngredientesSpan.textContent = total.toFixed(2);
   costoInput.value = total.toFixed(2);
 }
-
-
-
 
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
@@ -277,7 +295,8 @@ formIng.addEventListener("submit", (e) => {
     return;
   }
 
-  const nuevoIng = { nombre, cantidad, unidad, precio };
+  const contenido = parseFloat(contenidoInput.value) || 1;
+  const nuevoIng = { nombre, cantidad, unidad, precio, contenido };
   ingredientes.push(nuevoIng);
   localStorage.setItem("ingredientes", JSON.stringify(ingredientes));
   agregarIngredienteATabla(nuevoIng);
