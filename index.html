@@ -29,14 +29,13 @@
                 <p><strong>Costo total de ingredientes:</strong>$<span id="costo-ingredientes">0.00</span></p>
 
             </div>
-
             <button type="submit">Calcular</button>
         </form>
 
         <form id="form-ing">
-            <input type="text" id="ing-nombre" placeholder="Nombre del ingrediente o material" required>
-            <input type="number" id="ing-cantidad" placeholder="Cantidad total" required>
-            
+            <input type="text" id="ing-nombre" placeholder="Ingrediente o material" required>
+            <input type="number" id="ing-cantidad" placeholder="Ingresar cantidad" required>
+
             <select id="ing-unidad" required>
                 <optgroup label="Peso">
                     <option value="g">Gramos (g)</option>
@@ -52,8 +51,20 @@
                     <option value="paquete">Paquete</option>
                 </optgroup>
             </select>
-            <input type="number" id="ing-contenido" placeholder="Cantidad o peso por paquete" style:"display:none">
-            <input type="number" id="ing-precio" placeholder="Precio en $UYU" required>
+
+            <div id="grupo-paquete" style="display:none">
+                <input type="number" id="ing-contenido" placeholder="Unidades /Peso del paquete">
+                <select id="ing-contenido-unidad">
+                    <option value="g">g</option>
+                    <option value="kg">kg</option>
+                    <option value="l">l</option>
+                    <option value="cl">cl</option>
+                    <option value="ml">ml</option>
+                    <option value="unidad">unidad</option>
+                </select>
+            </div>
+
+            <input type="number" id="ing-precio" placeholder="Costo del producto o ingrediente" required>
             <button type="submit">Guardar en inventario</button>
         </form>
 

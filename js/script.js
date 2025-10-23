@@ -7,12 +7,16 @@ const tablaIng = document.getElementById("tabla-ing").querySelector("tbody");
 
 const unidadSelect = document.getElementById("ing-unidad");
 const contenidoInput = document.getElementById("ing-contenido");
+const grupoPaquete = document.getElementById('grupo-paquete');
+
+
+
 
 unidadSelect.addEventListener("change", () => {
   if (unidadSelect.value === "paquete") {
-    contenidoInput.style.display = "block";
+    grupoPaquete.style.display = "flex";
   } else {
-    contenidoInput.style.display = "none";
+    grupoPaquete.style.display = "none";
     contenidoInput.value = "";
   }
 });
@@ -28,19 +32,38 @@ const productos = JSON.parse(localStorage.getItem("productos")) || [];
 let gananciaTotal = 0;
 
 const conversion = {
-  g: 1,
-  kg: 1000,
-  ml: 1,
-  cl: 10,
-  l: 1000,
+  g: {tipo: "peso", factor: 1},
+  kg: {tipo: "peso", factor: 1000},
+  ml: {tipo: "volumen", factor: 1 },
+
+  cl: {tipo: "volumen", factor: 10},
+  l: {tipo: "volumen", factor: 1000},
+
+  unidad: {tipo: "unidad", factor: 1}
 };
 
+
 function convertirCantidad(cantidad, unidadOrigen, unidadDestino) {
-  if (conversion[unidadOrigen] && conversion[unidadDestino]) {
-    return (cantidad * conversion[unidadOrigen]) / conversion[unidadDestino];
+  //si son iguales no hay nada que convertir
+  if (unidadOrigen === unidadDestino) return cantidad; 
+
+  const origen = conversion[unidadOrigen];
+  const destino = conversion [unidadDestino];
+
+  // si alguna cantidad no existe devolvemos la cantidad original
+  if (!origen || !destino) return cantidad;
+
+  //solo convertir si son del mismo tipo peso a peso, o volumen a volumen
+  if (origen.tipo !== destino.tipo ){
+    console.warn(`⚠️ No se puede convertir de ${unidadOrigen} a ${unidadDestino}`);
+    return cantidad;
   }
-  return cantidad; //si no hay conversión
+
+//fórmula: cantidad * (factorOrigen / factorDestino)
+return (cantidad* origen.factor) / destino.factor;
 }
+
+
 
 // esto es lo de leer la imagen y convertir a Base64 y lo guarda en localStorage
 function leerImagen(file) {
@@ -51,6 +74,9 @@ function leerImagen(file) {
     reader.readAsDataURL(file);
   });
 }
+
+
+
 
 function agregarIngredienteATabla(ing) {
   const fila = document.createElement("tr");
@@ -71,6 +97,9 @@ function agregarIngredienteATabla(ing) {
   });
 }
 
+
+
+
 // Acá se selecciona ingresar precio o calcular según porcentaje ganancia
 precioInput.addEventListener("input", () => {
   if (precioInput.value !== "") {
@@ -80,6 +109,7 @@ precioInput.addEventListener("input", () => {
     gananciaInput.disabled = false;
   }
 });
+
 
 gananciaInput.addEventListener("input", () => {
   if (gananciaInput.value !== "") {
@@ -98,6 +128,9 @@ const agregarIngredienteUsoBtn = document.getElementById(
 const costoIngredientesSpan = document.getElementById("costo-ingredientes");
 
 let ingredientesUsados = []; //ingredientes para el producto actual
+
+
+
 
 agregarIngredienteUsoBtn.addEventListener("click", (e) => {
   e.preventDefault();
@@ -142,8 +175,6 @@ agregarIngredienteUsoBtn.addEventListener("click", (e) => {
   <optgroup label="Unidades">
     <option value="unidad">Unidad</option>
     <option value="paquete">Paquete</option>
-    <option value="bolsa">Bolsa</option>
-    <option value="manga">Manga</option>
   </optgroup>
   `;
 
@@ -171,6 +202,9 @@ agregarIngredienteUsoBtn.addEventListener("click", (e) => {
   actualizarCostoIngredientes();
 });
 
+
+
+
 function actualizarCostoIngredientes() {
   let total = 0;
   const filas = listaIngredientesUso.querySelectorAll(".ingrediente-uso");
@@ -193,8 +227,13 @@ function actualizarCostoIngredientes() {
 
     if (ingData.unidad === "paquete") {
       //si ingrediente se guarda como paquete
-      cantidadConvertida =
-        (cantidadUsada / ingData.contenido) * ingData.cantidad;
+      const contenidoEnBase = convertirCantidad (
+        ingData.contenido,
+        ingData.contenidoUnidad,
+        unidadUsada
+      );
+
+      cantidadConvertida = (cantidadUsada / contenidoEnBase) * ingData.cantidad;
     } else {
       // sino se usa la conversión normal
       cantidadConvertida = convertirCantidad(
@@ -203,6 +242,7 @@ function actualizarCostoIngredientes() {
         ingData.unidad // unidad en el inventario
       );
     }
+
 
     const costoUnitario = ingData.precio / ingData.cantidad;
     const costoTotal = costoUnitario * cantidadConvertida;
@@ -222,6 +262,9 @@ function actualizarCostoIngredientes() {
   costoInput.value = total.toFixed(2);
 }
 
+
+
+
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
 
@@ -230,7 +273,9 @@ form.addEventListener("submit", async (e) => {
 
   let precioFinal;
 
-  if (precioInput.value !== "E") {
+
+  //comprobar si el usuario pone un precio (campo no vacio)
+  if (precioInput.value !== "") {
     precioFinal = parseFloat(precioInput.value);
   } else if (gananciaInput.value !== "") {
     const porcentaje = parseFloat(gananciaInput.value);
@@ -239,6 +284,12 @@ form.addEventListener("submit", async (e) => {
     alert("Debes ingresar precio de producto o porcentaje deseado de ganancia");
     return;
   }
+
+  //validación extra por si parseFloat devuelve un Nan
+  if (isNaN(precioFinal)) {
+    alert("El precio calculado no es válido. Revisa el precio/ porcentaje.");
+  return; }
+
 
   const ganancia = precioFinal - costo;
   //const ganancia = precio - costo;
@@ -276,6 +327,8 @@ form.addEventListener("submit", async (e) => {
   gananciaInput.disabled = false;
 });
 
+
+
 formIng.addEventListener("submit", (e) => {
   e.preventDefault();
 
@@ -291,18 +344,42 @@ formIng.addEventListener("submit", (e) => {
     isNaN(precio) ||
     precio <= 0
   ) {
-    alert("Por favor completa todos los campos del ingrediente. ");
+    alert("Cantidad o precio no puede ser 0 ");
     return;
   }
 
   const contenido = parseFloat(contenidoInput.value) || 1;
-  const nuevoIng = { nombre, cantidad, unidad, precio, contenido };
+  const contenidoUnidad = document.getElementById('ing-contenido-unidad').value;
+
+  if(!nombre) {
+  alert("Ingresa un nombre para el material/ingrediente");
+  return;
+  }
+
+  if (isNaN(cantidad) || cantidad <= 0) {
+    alert("La cantidad debe ser mayor a 0.");
+    return;
+  }
+
+  if (isNaN(precio) || precio <= 0) {
+    alert("El precio debe ser mayor que 0.");
+    return;
+  }
+
+
+  const contenidoFinal = unidad === "paquete" ? contenido :1;
+
+
+  const nuevoIng = { nombre, cantidad, unidad, precio, contenido: contenidoFinal };
+
   ingredientes.push(nuevoIng);
   localStorage.setItem("ingredientes", JSON.stringify(ingredientes));
   agregarIngredienteATabla(nuevoIng);
 
   formIng.reset();
 });
+
+
 
 function agregarProductoATabla(prod) {
   const fila = document.createElement("tr");
