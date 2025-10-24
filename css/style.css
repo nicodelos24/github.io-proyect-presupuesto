@@ -137,3 +137,49 @@ td:last-child {
     width: 100%;
   }
 }
+
+input, select {
+  padding: 12px 15px;
+  border: 1px solid #e0b0c4;
+  border-radius: 8px;
+  background-color: #fff0f4;
+  transition: all 0.2s ease;
+  font-size: 14px;
+  outline: none;
+}
+
+input:focus, select:focus {
+  border-color: #d46a8c;
+  box-shadow: 0 0 5px rgba(212, 106, 140, 0.5);
+  background-color: #fff6f8;
+}
+
+body, input, select, button {
+  font-family: 'Roboto', Arial, sans-serif;
+}
+
+/* Inputs y selects */
+input, select {
+  padding: 12px 15px;
+  border: 1px solid #e0b0c4;
+  border-radius: 8px;
+  background-color: #fff0f4;
+  transition: all 0.2s ease;
+  font-size: 14px;
+  outline: none;
+  margin-bottom: 12px; /* espacio entre campos */
+  color: #333; /* texto oscuro */
+}
+
+/* Inputs numéricos un poco más discretos */
+input[type="number"] {
+  color: #222; /* gris más oscuro para números */
+  font-weight: 500;
+}
+
+/* Focus */
+input:focus, select:focus {
+  border-color: #d46a8c;
+  box-shadow: 0 0 5px rgba(212, 106, 140, 0.5);
+  background-color: #fff6f8;
+}
