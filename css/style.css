@@ -73,7 +73,7 @@ td .editar-prod, td .borrar-prod, td .editar-ing, td .borrar-ing {
   font-size: 14px;
 }
 
-/* Separar botones de acciones */
+/* Separa botones de acciones */
 td:last-child {
   display: flex;
   justify-content: center;
@@ -81,7 +81,7 @@ td:last-child {
   flex-wrap: wrap;
 }
 
-/* Total */
+
 .total {
   margin-top: 20px;
   font-weight: bold;
@@ -168,9 +168,9 @@ input, select {
   color: #333; /* texto oscuro */
 }
 
-/* Inputs numéricos un poco más discretos */
+/* más discretos */
 input[type="number"] {
-  color: #222; /* gris más oscuro para números */
+  color: #222; /* gris más oscuro para nume */
   font-weight: 500;
 }
 
@@ -193,4 +193,5 @@ input:focus, select:focus {
 }
 .btn-3 {
   width:150px;
+
 }
