@@ -42,6 +42,10 @@ const conversion = {
   unidad: {tipo: "unidad", factor: 1}
 };
 
+function obtenerTipoUnidad(unidad) {
+  const conv = conversion[unidad];
+  return conv ? conv.tipo : "unidad"; //si no la encuentra asumimos tipo 'unidad'
+}
 
 function convertirCantidad(cantidad, unidadOrigen, unidadDestino) {
   //si son iguales no hay nada que convertir
@@ -175,21 +179,51 @@ agregarIngredienteUsoBtn.addEventListener("click", (e) => {
   cantidadInput.min = "0";
 
   const unidadSelect = document.createElement("select");
-  unidadSelect.innerHTML = `
-  <optgroup label="Peso">
-    <option value="g">Gramos (g)</option>
-    <option value="kg">Kilogramos (kg)</option>
-  </optgroup>
-  <optgroup label="Volumen">
-    <option value="ml">Mililitros (ml)</option>
-    <option value="cl">Centilitros (cl)</option>
-    <option value="l">Litros (l)</option>
-  </optgroup>
-  <optgroup label="Unidades">
+
+  // asi se actualizan las opciones segun el tipo de unidad
+function actualizarOpcionesUnidad(unidadBase) {
+  const tipo = obtenerTipoUnidad(unidadBase);
+  let opciones = "";
+
+  if (tipo === "peso") {
+    opciones = `
+    <optgroup label="Peso">
+      <option value="g">Gramos (g)</option>
+      <option value="kg">Kilogramos (kg)</option>
+    </optgroup>
+    `;
+  } else if (tipo === "volumen"){
+    opciones = `
+    <optgroup label="Volumen">
+      <option value="ml">Mililitros (ml)</option>
+      <option value="cl">Centilitros (cl)</option>
+      <option value="l">Litros (l)</option>
+    </optgroup>
+    `;
+  } else {
+    opciones= `
+    <optgroup label="Unidades">
     <option value="unidad">Unidad</option>
     <option value="paquete">Paquete</option>
-  </optgroup>
-  `;
+    </optgroup>
+    `;
+  }
+  unidadSelect.innerHTML = opciones;
+}
+
+// Actualiza las opciones cuando se elige un ingrediente
+select.addEventListener("change", () => {
+  const ingData = ingredientes.find((i) => i.nombre === select.value);
+  if (ingData) {
+    actualizarOpcionesUnidad(ingData.unidad);
+  }
+  actualizarCostoIngredientes();
+});
+
+// mostrar opciones correctas apenas se crea el campo (usando el primer ingrediente por defecto)
+if (ingredientes[0]) {
+  actualizarOpcionesUnidad(ingredientes[0].unidad);
+}
 
   // costo parcial
   const costoParcial = document.createElement("span");
@@ -238,7 +272,7 @@ function actualizarCostoIngredientes() {
 
     let cantidadConvertida;
 
-    if (ingData.unidad === "paquete") {
+    if (ingData.unidad === "paquete" && unidadUsada !== "paquete") {
       //si ingrediente se guarda como paquete
       const contenidoEnBase = convertirCantidad (
         ingData.contenido,
@@ -247,6 +281,16 @@ function actualizarCostoIngredientes() {
       );
 
       cantidadConvertida = (cantidadUsada / contenidoEnBase) * ingData.cantidad;
+    } else if (ingData.unidad !== "paquete" && unidadUsada === "paquete"){
+    //  caso 2: ingrediente guardado en unidades/peso pero seu usa en paquetes
+      const contenidoEnBase = convertirCantidad(
+        ingData.contenido,
+        ingData.contenidoUnidad,
+        ingData.unidad
+      );
+      cantidadConvertida = cantidadUsada * contenidoEnBase;
+
+      
     } else {
       // sino se usa la conversión normal
       cantidadConvertida = convertirCantidad(
