@@ -108,11 +108,13 @@ td:last-child {
 @media (max-width: 768px) {
   .container {
     padding: 15px;
+    margin:0 auto;
   }
 
   th, td {
     font-size: 14px;
     padding: 6px;
+    display:flex;
   }
 
   td img {
