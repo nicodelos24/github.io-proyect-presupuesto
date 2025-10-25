@@ -68,7 +68,7 @@ body {
 
 .tabla-scroll {
   width: 100%;
-  overflow-x: auto; /* habilita scroll horizontal */
+  overflow-x: auto; 
 }
 
 tr:nth-child(even) {
@@ -98,13 +98,11 @@ table {
   width: 100%;
   border-collapse: collapse;
   min-width: 700px;
-  font-family: 'Poppins', sans-serif;
-  color: #444;
+
 }
 
 thead {
   background: linear-gradient(to right, #fff6f8, #fff6f8);
-  color: #555;
   font-weight: 600;
 }
 
@@ -175,7 +173,6 @@ td img {
 @media (max-width: 600px) {
   th, td {
     padding: 8px;
-    font-size: 0.9rem;
   }
 
   td img {
