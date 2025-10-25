@@ -89,9 +89,9 @@ tr:nth-child(even) {
   width: 100%;
   overflow-x: auto;
   margin-top: 30px;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-  background-color: #fff;
+  border-radius: 6px;
+  background-color: #fff6f8;
+  align-items: center;
 }
 
 table {
@@ -103,7 +103,7 @@ table {
 }
 
 thead {
-  background: linear-gradient(to right, #f6e7ee5b, #f3f0f67e);
+  background: linear-gradient(to right, #fff6f8, #fff6f8);
   color: #555;
   font-weight: 600;
 }

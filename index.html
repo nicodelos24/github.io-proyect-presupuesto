@@ -16,7 +16,7 @@
 
         <form id="form-prod">
             <input type="text" id="nombre" placeholder="Nombre del producto" required>
-            <input type="file" id="imagen" accept="image/">
+            <!--  <input type="file" id="imagen" accept="image/"> -->
             <input type="number" id="costo" placeholder="Costo en $ (por unidad)" step="any" required>
             <input type="number" id="precio" step="any" placeholder="Precio de venta en $ (por unidad)">
             <input type="number" id="ganancia-deseada" placeholder="Ganancia deseada en %">
@@ -35,7 +35,6 @@
         <form id="form-ing">
             <input type="text" id="ing-nombre" placeholder="Ingrediente o material" required>
             <input type="number" id="ing-cantidad" placeholder="Ingresar cantidad" step="any" required>
-
             <select id="ing-unidad" required>
                 <optgroup label="Peso">
                     <option value="g" step="any">Gramos (g)</option>
@@ -51,7 +50,7 @@
                     <option value="paquete">Paquete</option>
                 </optgroup>
             </select>
-
+            
             <div id="grupo-paquete" style="display:none">
                 <input type="number" id="ing-contenido" placeholder="Unidades /Peso del paquete">
                 <select id="ing-contenido-unidad">
@@ -63,52 +62,53 @@
                     <option value="unidad">unidad</option>
                 </select>
             </div>
-
+            
             <input type="number" id="ing-precio" placeholder="Costo del producto o ingrediente" required>
+            <input type="file" id="ing-imagen" accept="image/*">
             <button class="btn-3" type="submit">Guardar en inventario</button>
         </form>
-<div class="tabla-scroll">
-        <table id="tabla-prod">
-            <thead>
-                <tr>
-                    <th>Producto</th>
-                    <th>Costo</th>
-                    <th>Precio</th>
-                    <th>Neto</th>
-                    <th>Porcentaje de ganancia</th>
-                    <th>Ingredientes</th>
-                    <th>Imagen</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
+        <div class="tabla-scroll">
+            <table id="tabla-prod">
+                <thead>
+                    <tr>
+                        <th>Producto</th>
+                        <th>Costo</th>
+                        <th>Precio</th>
+                        <th>Neto</th>
+                        <th>Porcentaje de ganancia</th>
+                        <th>Ingredientes</th>
+                        <th>Imagen</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
 
-            </tbody>
-        </table>
-</div>
+                </tbody>
+            </table>
+        </div>
 
-<div class="tabla-scroll">
-        <table id="tabla-ing">
-            <thead>
-                <tr>
-                    <th>Ingrediente</th>
-                    <th>Cantidad total</th>
-                    <th>Unidad</th>
-                    <th>Precio total</th>
-                    <th>Precio unitario</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
+        <div class="tabla-scroll">
+            <table id="tabla-ing">
+                <thead>
+                    <tr>
+                        <th>Ingrediente</th>
+                        <th>Cantidad total</th>
+                        <th>Unidad</th>
+                        <th>Precio total</th>
+                        <th>Precio unitario</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
 
-            </tbody>
-        </table>
+                </tbody>
+            </table>
 
-        
+
+        </div>
+        <div class="total">Ganancia total: $UYU <span id="ganancia-total">0</span></div>
+
     </div>
-    <div class="total">Ganancia total: $UYU <span id="ganancia-total">0</span></div>
-
-</div>
 
     <script src="js/script.js"></script>
 </body>

@@ -4,6 +4,7 @@ const total = document.getElementById("ganancia-total");
 
 const formIng = document.getElementById("form-ing");
 const tablaIng = document.getElementById("tabla-ing").querySelector("tbody");
+const ingImagenInput = document.getElementById("ing-imagen");
 
 const tablaProdBody = tabla.querySelector("tbody");
 
@@ -96,6 +97,7 @@ function agregarIngredienteATabla(ing) {
   <td>$${ing.precio.toFixed(2)}</td>
   <td>$${precioUnitario.toFixed(1)} por ${unidadReferencia}</td>
   <td>
+  <td>${ing.imagen ? `<img src="${ing.imagen}" width="50">` : "- -"}</td>
   <button class ="editar-ing">✏️</button>
   <button class ="borrar-ing">🗑️</button>
   </td>
@@ -400,7 +402,7 @@ form.addEventListener("submit", async (e) => {
   gananciaInput.disabled = false;
 });
 
-formIng.addEventListener("submit", (e) => {
+formIng.addEventListener("submit", async (e) => {
   e.preventDefault();
 
   const nombre = document.getElementById("ing-nombre").value.trim();
@@ -419,6 +421,11 @@ formIng.addEventListener("submit", (e) => {
     return alert("El precio debe ser mayor que 0.");
 
   const contenidoFinal = unidad === "paquete" ? contenido : 1;
+  let imagen = "";
+  if (ingImagenInput.files[0]) {
+    imagen = await leerImagen(ingImagenInput.files[0]);
+  }
+
   const nuevoIng = {
     nombre,
     cantidad,
@@ -426,6 +433,7 @@ formIng.addEventListener("submit", (e) => {
     precio,
     contenido: contenidoFinal,
     contenidoUnidad,
+    imagen
   };
 
   //editar
