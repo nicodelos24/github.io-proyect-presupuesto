@@ -31,6 +31,22 @@ const productos = JSON.parse(localStorage.getItem("productos")) || [];
 
 let gananciaTotal = 0;
 
+function actualizarGananciaTotal() {
+  const tabla = document.querySelector("#tabla-prod tbody");
+  let totalGanancia = 0;
+
+  tabla.querySelectorAll("tr").forEach((fila) => {
+    const costo =
+      parseFloat(fila.children[1].textContent.replace(/[^\d.-]/g, "")) || 0;
+    const precio =
+      parseFloat(fila.children[2].textContent.replace(/[^\d.-]/g, "")) || 0;
+    totalGanancia += precio - costo;
+  });
+
+  document.getElementById("ganancia-total").textContent =
+    totalGanancia.toFixed(2);
+}
+
 const conversion = {
   g: { tipo: "peso", factor: 1 },
   kg: { tipo: "peso", factor: 1000 },
@@ -96,8 +112,7 @@ function agregarIngredienteATabla(ing) {
   <td>${ing.unidad}</td>
   <td>$${ing.precio.toFixed(2)}</td>
   <td>$${precioUnitario.toFixed(1)} por ${unidadReferencia}</td>
-  <td>
-  <td>${ing.imagen ? `<img src="${ing.imagen}" width="50">` : "- -"}</td>
+  <td>${ing.imagen ? `<img src="${ing.imagen}" width="50">` : "-"}</td>
   <button class ="editar-ing">✏️</button>
   <button class ="borrar-ing">🗑️</button>
   </td>
@@ -363,11 +378,6 @@ form.addEventListener("submit", async (e) => {
   //const ganancia = precio - costo;
   const porcentaje = ((precioFinal - costo) / costo) * 100;
 
-  let imagen = "";
-  if (imagenInput.files[0]) {
-    imagen = await leerImagen(imagenInput.files[0]);
-  }
-
   const producto = {
     id: editId || Date.now(),
     nombre,
@@ -375,7 +385,6 @@ form.addEventListener("submit", async (e) => {
     precio: precioFinal,
     ganancia,
     porcentaje,
-    imagen,
     ingredientes: [...ingredientesUsados],
   };
 
@@ -389,6 +398,7 @@ form.addEventListener("submit", async (e) => {
   } else {
     productos.push(producto);
     agregarProductoATabla(producto);
+    actualizarGananciaTotal();
     alert("Producto agregado.");
   }
 
@@ -421,7 +431,10 @@ formIng.addEventListener("submit", async (e) => {
     return alert("El precio debe ser mayor que 0.");
 
   const contenidoFinal = unidad === "paquete" ? contenido : 1;
-  let imagen = "";
+  let imagen =
+    formIng.dataset.editIndex !== undefined
+      ? ingredientes[formIng.dataset.editIndex].imagen
+      : "";
   if (ingImagenInput.files[0]) {
     imagen = await leerImagen(ingImagenInput.files[0]);
   }
@@ -433,7 +446,7 @@ formIng.addEventListener("submit", async (e) => {
     precio,
     contenido: contenidoFinal,
     contenidoUnidad,
-    imagen
+    imagen,
   };
 
   //editar
@@ -471,8 +484,6 @@ function agregarProductoATabla(prod) {
     )
     .join("<br>")}
   </td>
-  <td>${prod.imagen ? `<img src="${prod.imagen}" width="50">` : "- -"}</td>
-  <td>
   <button class="editar-prod">✏️</button>
   <button class="borrar-prod">🗑️</button>
   </td>
@@ -506,6 +517,7 @@ function agregarProductoATabla(prod) {
 
       //quitar fila de la tabla
       fila.remove();
+      actualizarGananciaTotal();
     }
   });
 }
