@@ -4,16 +4,14 @@
 Para luego poder ajustar y visualizar su precio, ganancia, y porcentaje de ganancia.
 También ingresando cuánto porcentaje de ganancia se quiere ganar se puede ver el precio correspondiente.
 
-.Agregué una funcionalidad para guardar imágenes (estaría bueno poder sacar una foto en el momento si es con celu)
+.Agregué una funcionalidad para guardar imágenes (sacar una foto en el momento si es con celu)
 
 
-- Y ahora quiero integrar un inventario para poder aprovechar que se puede guardar una lista de ingredientes,
+inventario para guardar una lista de ingredientes,
 colocando así el precio al por mayor del producto, y que se realicen los cálculos para poder obtener el costo
 de las recetas (o sea el producto final) y así tener siempre precios actualizados y correctos.
 
--opc- Quizá agregar también funcionalidad de tener las imágenes del inventario guardadas si se puede (no se de que forma
-porque creo que localStorage era limitado).
-
+Funcionalidad de tener las imágenes del inventario guardadas si se puede 
 
 -opc- Otra idea puede ser la de agregar un estimado de horas (tiempo) que toma cada receta.
 
@@ -34,19 +32,19 @@ En conclusion:
 como ingredientes (que se sumen según cada receta, acá estaria bueno meter el recetario) 
 
 
-✅ Gestión de ingredientes/materiales con cantidades, unidades y precios.
+ Gestión de ingredientes/materiales con cantidades, unidades y precios.
 
-✅ Cálculo automático de costos de producción según ingredientes usados.
+ Cálculo automático de costos de producción según ingredientes usados.
 
-✅ Cálculo de precio de venta según ganancia deseada.
+Cálculo de precio de venta según ganancia deseada.
 
-✅ Carga de imagen del producto.
+ Carga de imagen del producto.
 
-✅ Persistencia con localStorage (se guarda todo aunque recargue).
+Persistencia con localStorage (se guarda todo aunque recargue).
 
-✅ Eliminación de productos e ingredientes.
+ Eliminación de productos e ingredientes.
 
-✅ Conversión básica de unidades (g, kg, ml, l, etc).
+ Conversión básica de unidades (g, kg, ml, l, etc).
 
 
 -Editar productos o ingredientes existentes (por ejemplo si cambia un precio).
@@ -69,10 +67,6 @@ como ingredientes (que se sumen según cada receta, acá estaria bueno meter el 
 
 -Mostrar unidades equivalentes (por ejemplo “1 kg = 1000 g”, solo como ayuda visual).
 
-
-
-
---Sugerencia
 
 
 
