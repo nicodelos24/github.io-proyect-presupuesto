@@ -62,7 +62,9 @@ body {
       text-align: right;
     }
 
-
+.btn {
+  margin-bottom:10px;
+}
 
 .tabla-scroll {
   width: 100%;
@@ -101,7 +103,7 @@ table {
 }
 
 thead {
-  background: linear-gradient(to right, #f6e7ee, #f3f0f6);
+  background: linear-gradient(to right, #f6e7ee5b, #f3f0f67e);
   color: #555;
   font-weight: 600;
 }
@@ -121,7 +123,7 @@ tr:hover {
   transition: background-color 0.2s ease;
 }
 
-/* Imágenes pequeñas con borde redondeado */
+
 td img {
   width: 60px;
   height: 60px;
@@ -130,7 +132,7 @@ td img {
   border: 1px solid #eee;
 }
 
-/* Botones de acción (editar/borrar) */
+
 .editar-ing, .borrar-ing,
 .editar-prod, .borrar-prod {
   border: none;
@@ -152,7 +154,7 @@ td img {
   color: #c04c65;
 }
 
-/* Resumen de ganancia total */
+
 .total {
   margin-top: 20px;
   text-align: right;
@@ -169,7 +171,7 @@ td img {
   color: #b85d7c;
 }
 
-/* Responsive */
+
 @media (max-width: 600px) {
   th, td {
     padding: 8px;
