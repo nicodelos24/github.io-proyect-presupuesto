@@ -17,8 +17,8 @@
         <form id="form-prod">
             <input type="text" id="nombre" placeholder="Nombre del producto" required>
             <input type="file" id="imagen" accept="image/">
-            <input type="number" id="costo" placeholder="Costo en $ (por unidad)" required>
-            <input type="number" id="precio" placeholder="Precio de venta en $ (por unidad)">
+            <input type="number" id="costo" placeholder="Costo en $ (por unidad)" step="any" required>
+            <input type="number" id="precio" step="any" placeholder="Precio de venta en $ (por unidad)">
             <input type="number" id="ganancia-deseada" placeholder="Ganancia deseada en %">
 
             <div id="ingredientes-usados">
@@ -34,17 +34,17 @@
 
         <form id="form-ing">
             <input type="text" id="ing-nombre" placeholder="Ingrediente o material" required>
-            <input type="number" id="ing-cantidad" placeholder="Ingresar cantidad" required>
+            <input type="number" id="ing-cantidad" placeholder="Ingresar cantidad" step="any" required>
 
             <select id="ing-unidad" required>
                 <optgroup label="Peso">
-                    <option value="g">Gramos (g)</option>
-                    <option value="kg">Kilogramos (kg)</option>
+                    <option value="g" step="any">Gramos (g)</option>
+                    <option value="kg" step="any">Kilogramos (kg)</option>
                 </optgroup>
                 <optgroup label="Volumen">
-                    <option value="ml">Mililitros (ml)</option>
-                    <option value="cl">Centilitros (cl)</option>
-                    <option value="l">Litros (l)</option>
+                    <option value="ml" step="any">Mililitros (ml)</option>
+                    <option value="cl" step="any">Centilitros (cl)</option>
+                    <option value="l" step="any">Litros (l)</option>
                 </optgroup>
                 <optgroup label="Unidades">
                     <option value="unidad">Unidad</option>
@@ -55,11 +55,11 @@
             <div id="grupo-paquete" style="display:none">
                 <input type="number" id="ing-contenido" placeholder="Unidades /Peso del paquete">
                 <select id="ing-contenido-unidad">
-                    <option value="g">g</option>
-                    <option value="kg">kg</option>
-                    <option value="l">l</option>
-                    <option value="cl">cl</option>
-                    <option value="ml">ml</option>
+                    <option value="g" step="any">g</option>
+                    <option value="kg" step="any">kg</option>
+                    <option value="l" step="any">l</option>
+                    <option value="cl" step="any">cl</option>
+                    <option value="ml" step="any">ml</option>
                     <option value="unidad">unidad</option>
                 </select>
             </div>
@@ -67,7 +67,7 @@
             <input type="number" id="ing-precio" placeholder="Costo del producto o ingrediente" required>
             <button class="btn-3" type="submit">Guardar en inventario</button>
         </form>
-
+<div class="tabla-scroll">
         <table id="tabla-prod">
             <thead>
                 <tr>
@@ -76,6 +76,8 @@
                     <th>Precio</th>
                     <th>Neto</th>
                     <th>Porcentaje de ganancia</th>
+                    <th>Ingredientes</th>
+                    <th>Imagen</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
@@ -83,7 +85,9 @@
 
             </tbody>
         </table>
+</div>
 
+<div class="tabla-scroll">
         <table id="tabla-ing">
             <thead>
                 <tr>
@@ -103,6 +107,9 @@
         <div class="total">Ganancia total: $UYU <span id="ganancia-total">0</span></div>
 
     </div>
+
+</div>
+
     <script src="js/script.js"></script>
 </body>
 

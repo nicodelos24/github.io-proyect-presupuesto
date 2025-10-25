@@ -62,7 +62,9 @@ body {
       text-align: right;
     }
 
-table {
-    display: flex;
-    flex-direction: column;
+
+
+.tabla-scroll {
+  width: 100%;
+  overflow-x: auto; /* habilita scroll horizontal */
 }

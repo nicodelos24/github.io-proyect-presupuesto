@@ -5,12 +5,11 @@ const total = document.getElementById("ganancia-total");
 const formIng = document.getElementById("form-ing");
 const tablaIng = document.getElementById("tabla-ing").querySelector("tbody");
 
+const tablaProdBody = tabla.querySelector("tbody");
+
 const unidadSelect = document.getElementById("ing-unidad");
 const contenidoInput = document.getElementById("ing-contenido");
-const grupoPaquete = document.getElementById('grupo-paquete');
-
-
-
+const grupoPaquete = document.getElementById("grupo-paquete");
 
 unidadSelect.addEventListener("change", () => {
   if (unidadSelect.value === "paquete") {
@@ -37,7 +36,7 @@ const conversion = {
   ml: { tipo: "volumen", factor: 1 },
   cl: { tipo: "volumen", factor: 10 },
   l: { tipo: "volumen", factor: 1000 },
-  unidad: { tipo: "unidad", factor: 1 }
+  unidad: { tipo: "unidad", factor: 1 },
 };
 
 function obtenerTipoUnidad(unidad) {
@@ -47,25 +46,25 @@ function obtenerTipoUnidad(unidad) {
 
 function convertirCantidad(cantidad, unidadOrigen, unidadDestino) {
   //si son iguales no hay nada que convertir
-  if (unidadOrigen === unidadDestino) return cantidad; 
+  if (unidadOrigen === unidadDestino) return cantidad;
 
   const origen = conversion[unidadOrigen];
-  const destino = conversion [unidadDestino];
+  const destino = conversion[unidadDestino];
 
   // si alguna cantidad no existe devolvemos la cantidad original
   if (!origen || !destino) return cantidad;
 
   //solo convertir si son del mismo tipo peso a peso, o volumen a volumen
-  if (origen.tipo !== destino.tipo ){
-    console.warn(`⚠️ No se puede convertir de ${unidadOrigen} a ${unidadDestino}`);
+  if (origen.tipo !== destino.tipo) {
+    console.warn(
+      `⚠️ No se puede convertir de ${unidadOrigen} a ${unidadDestino}`
+    );
     return cantidad;
   }
 
-//fórmula: cantidad * (factorOrigen / factorDestino)
-return (cantidad* origen.factor) / destino.factor;
+  //fórmula: cantidad * (factorOrigen / factorDestino)
+  return (cantidad * origen.factor) / destino.factor;
 }
-
-
 
 // esto es lo de leer la imagen y convertir a Base64 y lo guarda en localStorage
 function leerImagen(file) {
@@ -77,23 +76,18 @@ function leerImagen(file) {
   });
 }
 
-
-
-
 function agregarIngredienteATabla(ing) {
   const fila = document.createElement("tr");
 
+  // calcular correctamente precio unitario
+  let precioUnitario = ing.precio / ing.cantidad;
+  let unidadReferencia = ing.unidad;
 
-// calcular correctamente precio unitario
-let precioUnitario = ing.precio / ing.cantidad;
-let unidadReferencia = ing.unidad;
-
-
-//Si es un paquete. calcular precio por el contenido
-if (ing.unidad === "paquete" && ing.contenido && ing.contenidoUnidad) {
-  precioUnitario = ing.precio / (ing.cantidad * ing.contenido);
-  unidadReferencia = ing.contenidoUnidad; // mostrar por unidad de contenido
-}
+  //Si es un paquete. calcular precio por el contenido
+  if (ing.unidad === "paquete" && ing.contenido && ing.contenidoUnidad) {
+    precioUnitario = ing.precio / (ing.cantidad * ing.contenido);
+    unidadReferencia = ing.contenidoUnidad; // mostrar por unidad de contenido
+  }
 
   fila.innerHTML = `
   <td>${ing.nombre}</td>
@@ -108,22 +102,27 @@ if (ing.unidad === "paquete" && ing.contenido && ing.contenidoUnidad) {
   `;
   tablaIng.appendChild(fila);
 
-  fila.querySelector('.editar-ing').addEventListener('click', () =>{
-    document.getElementById('ing-nombre').value = ing.nombre;
-    document.getElementById('ing-cantidad').value = ing.cantidad;
-    document.getElementById('ing-unidad').value = ing.unidad;
-    document.getElementById('ing-precio').value = ing.precio;
+  fila.querySelector(".editar-ing").addEventListener("click", () => {
+    document.getElementById("ing-nombre").value = ing.nombre;
+    document.getElementById("ing-cantidad").value = ing.cantidad;
+    document.getElementById("ing-unidad").value = ing.unidad;
+    document.getElementById("ing-precio").value = ing.precio;
 
-    if(ing.unidad === "paquete") {
+    if (ing.unidad === "paquete") {
       grupoPaquete.style.display = "flex";
       contenidoInput.value = ing.contenido;
-      document.getElementById('ing-contenido-unidad').value = ing.contenidoUnidad;
+      document.getElementById("ing-contenido-unidad").value =
+        ing.contenidoUnidad;
     } else {
       grupoPaquete.style.display = "none";
     }
 
-// guardar indice del ingrediente en edicion
-  formIng.dataset.editIndex = ingredientes.findIndex(i => i.nombre === ing.nombre);
+    // guardar indice del ingrediente en edicion
+    formIng.dataset.editIndex = ingredientes.findIndex(
+      (i) => i.nombre === ing.nombre
+    );
+    formIng.scrollIntoView({ behavior: "smooth", block: "start" });
+    document.getElementById("ing-nombre").focus();
   });
 
   fila.querySelector(".borrar-ing").addEventListener("click", () => {
@@ -132,9 +131,6 @@ if (ing.unidad === "paquete" && ing.contenido && ing.contenidoUnidad) {
     fila.remove();
   });
 }
-
-
-
 
 // Acá se selecciona ingresar precio o calcular según porcentaje ganancia
 precioInput.addEventListener("input", () => {
@@ -145,7 +141,6 @@ precioInput.addEventListener("input", () => {
     gananciaInput.disabled = false;
   }
 });
-
 
 gananciaInput.addEventListener("input", () => {
   if (gananciaInput.value !== "") {
@@ -164,9 +159,6 @@ const agregarIngredienteUsoBtn = document.getElementById(
 const costoIngredientesSpan = document.getElementById("costo-ingredientes");
 
 let ingredientesUsados = []; //ingredientes para el producto actual
-
-
-
 
 agregarIngredienteUsoBtn.addEventListener("click", (e) => {
   e.preventDefault();
@@ -196,53 +188,54 @@ agregarIngredienteUsoBtn.addEventListener("click", (e) => {
   cantidadInput.type = "number";
   cantidadInput.placeholder = "Cantidad usada";
   cantidadInput.min = "0";
+  cantidadInput.step = "any";
 
   const unidadSelect = document.createElement("select");
 
   // asi se actualizan las opciones segun el tipo de unidad
-function actualizarOpcionesUnidad(unidadBase) {
-  const tipo = obtenerTipoUnidad(unidadBase);
-  let opciones = "";
+  function actualizarOpcionesUnidad(unidadBase) {
+    const tipo = obtenerTipoUnidad(unidadBase);
+    let opciones = "";
 
-  if (tipo === "peso") {
-    opciones = `
+    if (tipo === "peso") {
+      opciones = `
     <optgroup label="Peso">
       <option value="g">Gramos (g)</option>
       <option value="kg">Kilogramos (kg)</option>
     </optgroup>
     `;
-  } else if (tipo === "volumen"){
-    opciones = `
+    } else if (tipo === "volumen") {
+      opciones = `
     <optgroup label="Volumen">
       <option value="ml">Mililitros (ml)</option>
       <option value="cl">Centilitros (cl)</option>
       <option value="l">Litros (l)</option>
     </optgroup>
     `;
-  } else {
-    opciones= `
+    } else {
+      opciones = `
     <optgroup label="Unidades">
     <option value="unidad">Unidad</option>
     <option value="paquete">Paquete</option>
     </optgroup>
     `;
+    }
+    unidadSelect.innerHTML = opciones;
   }
-  unidadSelect.innerHTML = opciones;
-}
 
-// Actualiza las opciones cuando se elige un ingrediente
-select.addEventListener("change", () => {
-  const ingData = ingredientes.find((i) => i.nombre === select.value);
-  if (ingData) {
-    actualizarOpcionesUnidad(ingData.unidad);
+  // Actualiza las opciones cuando se elige un ingrediente
+  select.addEventListener("change", () => {
+    const ingData = ingredientes.find((i) => i.nombre === select.value);
+    if (ingData) {
+      actualizarOpcionesUnidad(ingData.unidad);
+    }
+    actualizarCostoIngredientes();
+  });
+
+  // mostrar opciones correctas apenas se crea el campo (usando el primer ingrediente por defecto)
+  if (ingredientes[0]) {
+    actualizarOpcionesUnidad(ingredientes[0].unidad);
   }
-  actualizarCostoIngredientes();
-});
-
-// mostrar opciones correctas apenas se crea el campo (usando el primer ingrediente por defecto)
-if (ingredientes[0]) {
-  actualizarOpcionesUnidad(ingredientes[0].unidad);
-}
 
   // costo parcial
   const costoParcial = document.createElement("span");
@@ -268,9 +261,6 @@ if (ingredientes[0]) {
   actualizarCostoIngredientes();
 });
 
-
-
-
 function actualizarCostoIngredientes() {
   let total = 0;
   const filas = listaIngredientesUso.querySelectorAll(".ingrediente-uso");
@@ -293,23 +283,21 @@ function actualizarCostoIngredientes() {
 
     if (ingData.unidad === "paquete" && unidadUsada !== "paquete") {
       //si ingrediente se guarda como paquete
-      const contenidoEnBase = convertirCantidad (
+      const contenidoEnBase = convertirCantidad(
         ingData.contenido,
         ingData.contenidoUnidad,
         unidadUsada
       );
 
       cantidadConvertida = (cantidadUsada / contenidoEnBase) * ingData.cantidad;
-    } else if (ingData.unidad !== "paquete" && unidadUsada === "paquete"){
-    //  caso 2: ingrediente guardado en unidades/peso pero seu usa en paquetes
+    } else if (ingData.unidad !== "paquete" && unidadUsada === "paquete") {
+      //  caso 2: ingrediente guardado en unidades/peso pero seu usa en paquetes
       const contenidoEnBase = convertirCantidad(
         ingData.contenido,
         ingData.contenidoUnidad,
         ingData.unidad
       );
       cantidadConvertida = cantidadUsada * contenidoEnBase;
-
-
     } else {
       // sino se usa la conversión normal
       cantidadConvertida = convertirCantidad(
@@ -318,11 +306,10 @@ function actualizarCostoIngredientes() {
         ingData.unidad // unidad en el inventario
       );
     }
-    
-    
+
     const costoUnitario = ingData.precio / ingData.cantidad;
     const costoTotal = costoUnitario * cantidadConvertida;
-    
+
     spanCosto.textContent = `$${costoTotal.toFixed(2)}`;
     total += costoTotal;
 
@@ -333,31 +320,26 @@ function actualizarCostoIngredientes() {
       costo: costoTotal,
     });
   });
-  
+
   costoIngredientesSpan.textContent = total.toFixed(2);
   costoInput.value = total.toFixed(2);
 }
 
-
-
-
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
-  
+
   const editId = form.dataset.editId;
-  
+
   const nombre = document.getElementById("nombre").value;
   const costo = parseFloat(costoInput.value);
-  
-  
-  if(!nombre || isNaN(costo) || costo <= 0) {
+
+  if (!nombre || isNaN(costo) || costo <= 0) {
     alert("el nombre o costo no es valido");
     return;
   }
-  
+
   let precioFinal;
-  
-  
+
   //comprobar si el usuario pone un precio (campo no vacio)
   if (precioInput.value !== "") {
     precioFinal = parseFloat(precioInput.value);
@@ -368,58 +350,55 @@ form.addEventListener("submit", async (e) => {
     alert("Debes ingresar precio de producto o porcentaje deseado de ganancia");
     return;
   }
-  
+
   //validación extra por si parseFloat devuelve un Nan
   if (isNaN(precioFinal)) {
     alert("El precio calculado no es válido. Revisa el precio/ porcentaje.");
-  return; }
-  
-  
+    return;
+  }
+
   const ganancia = precioFinal - costo;
   //const ganancia = precio - costo;
   const porcentaje = ((precioFinal - costo) / costo) * 100;
-  
+
   let imagen = "";
   if (imagenInput.files[0]) {
     imagen = await leerImagen(imagenInput.files[0]);
   }
 
-const producto = {
-  id: editId || Date.now(),
-  nombre,
-  costo,
-  precio: precioFinal,
-  ganancia,
-  porcentaje,
-  imagen,
-  ingredientes: [... ingredientesUsados],
-};
+  const producto = {
+    id: editId || Date.now(),
+    nombre,
+    costo,
+    precio: precioFinal,
+    ganancia,
+    porcentaje,
+    imagen,
+    ingredientes: [...ingredientesUsados],
+  };
 
-if(editId) {
-  const index = productos.findIndex((p) => p.id == editId);
-  productos[index] = producto;
-  delete form.dataset.editId;
-  tabla.querySelector('tbody').innerHTML = "";
-  productos.forEach(agregarProductoATabla);
-  alert('Producto actualizado correctamente.'); 
-} else {  
-  productos.push(producto);
-  agregarProductoATabla(producto);
-  alert('Producto agregado.')
-} 
+  if (editId) {
+    const index = productos.findIndex((p) => p.id == editId);
+    productos[index] = producto;
+    delete form.dataset.editId;
+    tabla.querySelector("tbody").innerHTML = "";
+    productos.forEach(agregarProductoATabla);
+    alert("Producto actualizado correctamente.");
+  } else {
+    productos.push(producto);
+    agregarProductoATabla(producto);
+    alert("Producto agregado.");
+  }
 
-localStorage.setItem("productos", JSON.stringify(productos));
+  localStorage.setItem("productos", JSON.stringify(productos));
 
-gananciaTotal = productos.reduce((acc,p) => acc + p.ganancia, 0);
-total.textContent = gananciaTotal.toFixed(2);
+  gananciaTotal = productos.reduce((acc, p) => acc + p.ganancia, 0);
+  total.textContent = gananciaTotal.toFixed(2);
 
-form.reset();
-precioInput.disabled = false;
-gananciaInput.disabled = false;
-
+  form.reset();
+  precioInput.disabled = false;
+  gananciaInput.disabled = false;
 });
-
-
 
 formIng.addEventListener("submit", (e) => {
   e.preventDefault();
@@ -429,43 +408,42 @@ formIng.addEventListener("submit", (e) => {
   const unidad = document.getElementById("ing-unidad").value.trim();
   const precio = parseFloat(document.getElementById("ing-precio").value);
   const contenido = parseFloat(contenidoInput.value) || 1;
-  const contenidoUnidad = document.getElementById('ing-contenido-unidad').value;
+  const contenidoUnidad = document.getElementById("ing-contenido-unidad").value;
   const editIndex = formIng.dataset.editIndex;
-  
-  
+
   //validaciones primero
-  if(!nombre) return alert("Ingresa un nombre para el material/ingrediente");
-  if (isNaN(cantidad) || cantidad <= 0) return alert("La cantidad debe ser mayor a 0.");
-  if (isNaN(precio) || precio <= 0) return alert("El precio debe ser mayor que 0.");
+  if (!nombre) return alert("Ingresa un nombre para el material/ingrediente");
+  if (isNaN(cantidad) || cantidad <= 0)
+    return alert("La cantidad debe ser mayor a 0.");
+  if (isNaN(precio) || precio <= 0)
+    return alert("El precio debe ser mayor que 0.");
 
-const contenidoFinal = unidad === "paquete" ? contenido : 1;
-const nuevoIng = {
-  nombre,
-  cantidad,
-  unidad,
-  precio,
-  contenido: contenidoFinal,
-  contenidoUnidad,
-};
+  const contenidoFinal = unidad === "paquete" ? contenido : 1;
+  const nuevoIng = {
+    nombre,
+    cantidad,
+    unidad,
+    precio,
+    contenido: contenidoFinal,
+    contenidoUnidad,
+  };
 
-//editar
-  if(editIndex !== undefined) {
+  //editar
+  if (editIndex !== undefined) {
     ingredientes[editIndex] = nuevoIng; //actualizar
     delete formIng.dataset.editIndex; //limpia el flag
   } else {
     ingredientes.push(nuevoIng); //agrego
   }
-   
+
   localStorage.setItem("ingredientes", JSON.stringify(ingredientes));
-  
+
   tablaIng.innerHTML = ""; //refrescar la tabla
   ingredientes.forEach(agregarIngredienteATabla);
-  
+
   formIng.reset(); //limpiar formulario
-grupoPaquete.style.display = "none";
+  grupoPaquete.style.display = "none";
 });
-
-
 
 function agregarProductoATabla(prod) {
   const fila = document.createElement("tr");
@@ -479,35 +457,38 @@ function agregarProductoATabla(prod) {
   ${prod.ingredientes
     .map(
       (i) =>
-        `${i.nombre} (${i.cantidad} ${i.unidad}${typeof i.costo === "number" ? " - $" + i.costo.toFixed(2) : ""
+        `${i.nombre} (${i.cantidad} ${i.unidad}${
+          typeof i.costo === "number" ? " - $" + i.costo.toFixed(2) : ""
         })`
     )
     .join("<br>")}
   </td>
-  <td>${prod.imagen ? `<img src="${prod.imagen}" width="50">` : ""}</td>
+  <td>${prod.imagen ? `<img src="${prod.imagen}" width="50">` : "- -"}</td>
   <td>
   <button class="editar-prod">✏️</button>
   <button class="borrar-prod">🗑️</button>
   </td>
   `;
-  tabla.querySelector("tbody").appendChild(fila);
+  tablaProdBody.appendChild(fila);
 
-    fila.querySelector('.editar-prod').addEventListener('click', () => {
-      document.getElementById('nombre').value = prod.nombre;
-      costoInput.value = prod.costo;
-      precioInput.value = prod.precio;
-      gananciaInput.value = prod.porcentaje;
+  fila.querySelector(".editar-prod").addEventListener("click", () => {
+    document.getElementById("nombre").value = prod.nombre;
+    costoInput.value = prod.costo;
+    precioInput.value = prod.precio;
+    gananciaInput.value = prod.porcentaje;
 
-// cargar ingredientes usados
-listaIngredientesUso.innerHTML= "";
-ingredientesUsados=[];
-prod.ingredientes.forEach(ing => {
-  // Se puede reutilizar la funcion de agregar ingrediente a la listaIngredientesUsode uso creando un objeto temporal como hace el  "agregarIngredienteUsoBtn"
-});
-//guardo id
-form.dataset.editId = prod.id;
-
+    // cargar ingredientes usados
+    listaIngredientesUso.innerHTML = "";
+    ingredientesUsados = [];
+    prod.ingredientes.forEach((ing) => {
+      // Se puede reutilizar la funcion de agregar ingrediente a la listaIngredientesUsode uso creando un objeto temporal como hace el  "agregarIngredienteUsoBtn"
     });
+    //guardo id
+    form.dataset.editId = prod.id;
+
+    form.scrollIntoView({ behavior: "smooth", block: "start" });
+    document.getElementById("nombre").focus();
+  });
 
   fila.querySelector(".borrar-prod").addEventListener("click", () => {
     if (confirm(`Deseas quitar "${prod.nombre}"?`)) {
@@ -521,5 +502,16 @@ form.dataset.editId = prod.id;
   });
 }
 
-productos.forEach(agregarProductoATabla);
-ingredientes.forEach(agregarIngredienteATabla);
+function cargarProductos() {
+  tablaProdBody.innerHTML = ""; // limpiar la tabla antes
+  productos.forEach(agregarProductoATabla);
+}
+
+function cargarIngredientes() {
+  tablaIng.innerHTML = ""; // limpiar tabla
+  ingredientes.forEach(agregarIngredienteATabla);
+}
+
+// llamar al cargar la página
+cargarIngredientes();
+cargarProductos();
