@@ -12,63 +12,83 @@
 
     <div class="container">
 
-        <h1>API Presupuestos Ferchu</h1>
+        <h1>Presupuestos</h1>
 
         <form id="form-prod">
-            <input type="text" id="nombre" placeholder="Nombre del producto" required>
-            <!--  <input type="file" id="imagen" accept="image/"> -->
-            <input type="number" id="costo" placeholder="Costo en $ (por unidad)" step="any" required>
-            <input type="number" id="precio" step="any" placeholder="Precio de venta en $ (por unidad)">
-            <input type="number" id="ganancia-deseada" placeholder="Ganancia deseada en %">
+            <label for="nombre">Nombre del producto:</label>
+            <input type="text" id="nombre" placeholder="Ej: Torta de chocolate" required>
+
+            <label for="imagen">Imagen del producto (opcional):</label>
+            <input type="file" id="imagen" accept="image/*">
+
+            <label for="costo">Costo en $UYU:</label>
+            <input type="number" id="costo" step="any" placeholder="Costo por unidad" required>
+
+            <label for="precio">Precio de venta en $UYU:</label>
+            <input type="number" id="precio" step="any" placeholder="Precio por unidad">
+
+            <label for="ganancia-deseada">Ganancia deseada en %:</label>
+            <input type="number" id="ganancia-deseada" placeholder="Ganancia deseada en este producto">
 
             <div id="ingredientes-usados">
-
                 <h3>Ingredientes del producto</h3>
                 <button type="button" id="agregar-ingrediente-uso">+ Agregar del inventario</button>
                 <div id="lista-ingredientes-uso"></div>
-                <p><strong>Costo total de ingredientes:</strong>$<span id="costo-ingredientes">0.00</span></p>
-
+                <p><strong>Costo total de ingredientes:</strong> $<span id="costo-ingredientes">0.00</span></p>
             </div>
-            <button class="btn" type="submit">Calcular</button>
-        </form>
 
+            <button class="btn" type="submit">Guardar</button>
+        </form>
+        
         <form id="form-ing">
-            <input type="text" id="ing-nombre" placeholder="Ingrediente o material" required>
-            <input type="number" id="ing-cantidad" placeholder="Ingresar cantidad" step="any" required>
+            <label for="ing-nombre">Nombre del ingrediente:</label>
+            <input type="text" id="ing-nombre" placeholder="Ej: Harina" required>
+
+            <label for="ing-cantidad">Cantidad total:</label>
+            <input type="number" id="ing-cantidad" placeholder="Cantidad" step="any" required>
+
+            <label for="ing-unidad">Unidad:</label>
             <select id="ing-unidad" required>
                 <optgroup label="Peso">
-                    <option value="g" step="any">Gramos (g)</option>
-                    <option value="kg" step="any">Kilogramos (kg)</option>
+                    <option value="g">Gramos (g)</option>
+                    <option value="kg">Kilogramos (kg)</option>
                 </optgroup>
                 <optgroup label="Volumen">
-                    <option value="ml" step="any">Mililitros (ml)</option>
-                    <option value="cl" step="any">Centilitros (cl)</option>
-                    <option value="l" step="any">Litros (l)</option>
+                    <option value="ml">Mililitros (ml / cc)</option>
+                    <option value="cl">Centilitros (cl)</option>
+                    <option value="l">Litros (l)</option>
                 </optgroup>
                 <optgroup label="Unidades">
                     <option value="unidad">Unidad</option>
                     <option value="paquete">Paquete</option>
                 </optgroup>
             </select>
-            
+
             <div id="grupo-paquete" style="display:none">
+                <label for="ing-contenido">Contenido del paquete:</label>
                 <input type="number" id="ing-contenido" placeholder="Unidades /Peso del paquete">
+
+                <label for="ing-contenido-unidad">Unidad del contenido:</label>
                 <select id="ing-contenido-unidad">
-                    <option value="g" step="any">g</option>
-                    <option value="kg" step="any">kg</option>
-                    <option value="l" step="any">l</option>
-                    <option value="cl" step="any">cl</option>
-                    <option value="ml" step="any">ml</option>
+                    <option value="g">g</option>
+                    <option value="kg">kg</option>
+                    <option value="l">l</option>
+                    <option value="cl">cl</option>
+                    <option value="ml">ml / cc</option>
                     <option value="unidad">unidad</option>
                 </select>
             </div>
-            
-            <input type="number" id="ing-precio" placeholder="Costo del producto o ingrediente" required>
+
+            <label for="ing-precio">Costo al por mayor:</label>
+            <input type="number" id="ing-precio" placeholder="Costo total del ingrediente al por mayor" required>
+
+            <label for="ing-imagen">Imagen del ingrediente (opcional)</label>
             <input type="file" id="ing-imagen" accept="image/*">
-            <button class="btn-3" type="submit">Guardar en inventario</button>
+
+            <button class="btn-3" type="submit">Guardar ingrediente</button>
         </form>
 
-        
+
         <div class="tabla-scroll">
             <table id="tabla-prod">
                 <thead>
@@ -79,6 +99,7 @@
                         <th>Ganancia neto</th>
                         <th>Porcentaje de ganancia</th>
                         <th>Ingredientes</th>
+                        <th>Imagen</th>
                         <th>Acción</th>
                     </tr>
                 </thead>
