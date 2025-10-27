@@ -273,7 +273,7 @@ agregarIngredienteUsoBtn.addEventListener("click", (e) => {
   unidadSelect.addEventListener("change", actualizarCostoIngredientes);
 
   cont.append(select, cantidadInput, unidadSelect, costoParcial, btnBorrar);
-  listaIngredientesUso.appendChild(cont);
+  listaIngredientesUso.prepend(cont);
 
   actualizarCostoIngredientes();
 });
@@ -298,32 +298,51 @@ function actualizarCostoIngredientes() {
 
     let cantidadConvertida;
 
+    // caso 1- ingrediente guardado como "paquete" pero usado en otra unidad (por ejemplo unidades o gramos)
     if (ingData.unidad === "paquete" && unidadUsada !== "paquete") {
-      //si ingrediente se guarda como paquete
       const contenidoEnBase = convertirCantidad(
         ingData.contenido,
         ingData.contenidoUnidad,
         unidadUsada
       );
 
-      cantidadConvertida = (cantidadUsada / contenidoEnBase) * ingData.cantidad;
-    } else if (ingData.unidad !== "paquete" && unidadUsada === "paquete") {
-      //  caso 2: ingrediente guardado en unidades/peso pero seu usa en paquetes
+      // costo total = precio total * fracción usada del stock total
+      const costoFraccion =
+        ingData.precio * (cantidadUsada / (ingData.cantidad * contenidoEnBase));
+
+      spanCosto.textContent = `$${costoFraccion.toFixed(2)}`;
+      total += costoFraccion;
+
+      ingredientesUsados.push({
+        nombre: nombreIng,
+        cantidad: cantidadUsada,
+        unidad: unidadUsada,
+        costo: costoFraccion,
+      });
+
+      return; // sale de esta iteración, ya se calculo este ingrediente
+    }
+
+    // caso 2 -ingrediente guardado en unidades/peso pero usado en paquetes
+    else if (ingData.unidad !== "paquete" && unidadUsada === "paquete") {
       const contenidoEnBase = convertirCantidad(
         ingData.contenido,
         ingData.contenidoUnidad,
         ingData.unidad
       );
       cantidadConvertida = cantidadUsada * contenidoEnBase;
-    } else {
-      // sino se usa la conversión normal
+    }
+
+    // caso3 -conversión normal (sin paquetes)
+    else {
       cantidadConvertida = convertirCantidad(
         cantidadUsada,
-        unidadUsada, // la selecciona el usuario al usar ingrediente
-        ingData.unidad // unidad en el inventario
+        unidadUsada,
+        ingData.unidad
       );
     }
 
+    // cálculo de costo normal
     const costoUnitario = ingData.precio / ingData.cantidad;
     const costoTotal = costoUnitario * cantidadConvertida;
 
@@ -338,6 +357,7 @@ function actualizarCostoIngredientes() {
     });
   });
 
+  // 🧾 mostrar total final
   costoIngredientesSpan.textContent = total.toFixed(2);
   costoInput.value = total.toFixed(2);
 }
@@ -346,6 +366,19 @@ form.addEventListener("submit", async (e) => {
   e.preventDefault();
 
   const editId = form.dataset.editId;
+
+  let imagenProducto = "";
+
+  // si estamos editando, mantenemos la imagen anterior
+  if (form.dataset.editId !== undefined) {
+    const prodExistente = productos.find((p) => p.id == form.dataset.editId);
+    if (prodExistente) imagenProducto = prodExistente.imagen || "";
+  }
+
+  // si se seleccionó un archivo nuevo, lo leemos
+  if (imagenInput.files[0]) {
+    imagenProducto = await leerImagen(imagenInput.files[0]);
+  }
 
   const nombre = document.getElementById("nombre").value;
   const costo = parseFloat(costoInput.value);
@@ -386,6 +419,7 @@ form.addEventListener("submit", async (e) => {
     ganancia,
     porcentaje,
     ingredientes: [...ingredientesUsados],
+    imagen: imagenProducto,
   };
 
   if (editId) {
@@ -410,6 +444,10 @@ form.addEventListener("submit", async (e) => {
   form.reset();
   precioInput.disabled = false;
   gananciaInput.disabled = false;
+
+  listaIngredientesUso.innerHTML = "";
+  ingredientesUsados = [];
+  costoIngredientesSpan.textContent = "0.00";
 });
 
 formIng.addEventListener("submit", async (e) => {
@@ -484,6 +522,10 @@ function agregarProductoATabla(prod) {
     )
     .join("<br>")}
   </td>
+  <td>
+  ${prod.imagen ? `<img src="${prod.imagen}" width="60">` : "-"}
+  </td>
+  <td>
   <button class="editar-prod">✏️</button>
   <button class="borrar-prod">🗑️</button>
   </td>
@@ -496,15 +538,86 @@ function agregarProductoATabla(prod) {
     precioInput.value = prod.precio;
     gananciaInput.value = prod.porcentaje;
 
-    // cargar ingredientes usados
+    // cargar ingredientes usados automáticamente
     listaIngredientesUso.innerHTML = "";
     ingredientesUsados = [];
-    prod.ingredientes.forEach((ing) => {
-      // Se puede reutilizar la funcion de agregar ingrediente a la listaIngredientesUsode uso creando un objeto temporal como hace el  "agregarIngredienteUsoBtn"
-    });
-    //guardo id
-    form.dataset.editId = prod.id;
 
+    prod.ingredientes.forEach((ing) => {
+      const cont = document.createElement("div");
+      cont.classList.add("ingrediente-uso");
+
+      const select = document.createElement("select");
+      ingredientes.forEach((invIng) => {
+        const opt = document.createElement("option");
+        opt.value = invIng.nombre;
+        opt.textContent = `${invIng.nombre} ($${(
+          invIng.precio / invIng.cantidad
+        ).toFixed(2)} por ${invIng.unidad})`;
+        select.appendChild(opt);
+      });
+      select.value = ing.nombre;
+
+      const cantidadInput = document.createElement("input");
+      cantidadInput.type = "number";
+      cantidadInput.placeholder = "Cantidad usada";
+      cantidadInput.step = "any";
+      cantidadInput.value = ing.cantidad;
+
+      const unidadSelect = document.createElement("select");
+
+      function actualizarOpcionesUnidad(unidadBase) {
+        const tipo = obtenerTipoUnidad(unidadBase);
+        let opciones = "";
+        if (tipo === "peso") {
+          opciones = `
+            <optgroup label="Peso">
+              <option value="g">Gramos (g)</option>
+              <option value="kg">Kilogramos (kg)</option>
+            </optgroup>`;
+        } else if (tipo === "volumen") {
+          opciones = `
+            <optgroup label="Volumen">
+              <option value="ml">Mililitros (ml)</option>
+              <option value="cl">Centilitros (cl)</option>
+              <option value="l">Litros (l)</option>
+            </optgroup>`;
+        } else {
+          opciones = `
+            <optgroup label="Unidades">
+              <option value="unidad">Unidad</option>
+              <option value="paquete">Paquete</option>
+            </optgroup>`;
+        }
+        unidadSelect.innerHTML = opciones;
+        unidadSelect.value = ing.unidad;
+      }
+
+      actualizarOpcionesUnidad(ing.unidad);
+
+      const costoParcial = document.createElement("span");
+      costoParcial.textContent = `$${ing.costo.toFixed(2)}`;
+
+      const btnBorrar = document.createElement("button");
+      btnBorrar.type = "button";
+      btnBorrar.textContent = "❌";
+      btnBorrar.addEventListener("click", () => {
+        cont.remove();
+        actualizarCostoIngredientes();
+      });
+
+      cantidadInput.addEventListener("input", actualizarCostoIngredientes);
+      select.addEventListener("change", actualizarCostoIngredientes);
+      unidadSelect.addEventListener("change", actualizarCostoIngredientes);
+
+      cont.append(select, cantidadInput, unidadSelect, costoParcial, btnBorrar);
+      listaIngredientesUso.appendChild(cont);
+
+      ingredientesUsados.push(ing); // mantener ingredientesUsados
+    });
+    // fin carga de ingredientes
+    actualizarCostoIngredientes();
+
+    form.dataset.editId = prod.id;
     form.scrollIntoView({ behavior: "smooth", block: "start" });
     document.getElementById("nombre").focus();
   });
@@ -514,8 +627,6 @@ function agregarProductoATabla(prod) {
       const index = productos.findIndex((p) => p.id === prod.id);
       productos.splice(index, 1);
       localStorage.setItem("productos", JSON.stringify(productos));
-
-      //quitar fila de la tabla
       fila.remove();
       actualizarGananciaTotal();
     }
@@ -525,6 +636,7 @@ function agregarProductoATabla(prod) {
 function cargarProductos() {
   tablaProdBody.innerHTML = ""; // limpiar la tabla antes
   productos.forEach(agregarProductoATabla);
+  actualizarGananciaTotal(); // ctualizar ganancia total al cargar la página
 }
 
 function cargarIngredientes() {
